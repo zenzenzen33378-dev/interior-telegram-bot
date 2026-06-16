@@ -1,0 +1,10 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.png
+*.jpg
+tmp/
+subscriptions.db
+.bot.pid

@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: interior-telegram-bot
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: POLZA_API_KEY
+        sync: false
+      - key: POLZA_MODEL
+        value: black-forest-labs/flux.2-pro
+      - key: POLZA_STRENGTH
+        value: "0.72"
+      - key: YOOKASSA_SHOP_ID
+        sync: false
+      - key: YOOKASSA_SECRET_KEY
+        sync: false
+      - key: SUBSCRIPTION_PRICE_RUB
+        value: "10"
+      - key: SUBSCRIPTION_DAYS
+        value: "30"
+      - key: SUBSCRIPTION_GENERATIONS
+        value: "20"
+      - key: SUBSCRIPTION_ADMIN_USERNAMES
+        value: leeooo19
