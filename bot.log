@@ -1,0 +1,25 @@
+INFO:__main__:Bot started, model=black-forest-labs/FLUX.1-Kontext-dev, providers=huggingface
+INFO:aiogram.dispatcher:Start polling
+INFO:aiogram.dispatcher:Run polling for bot @MakeaRoomBot id=8655990537 - 'MakeRoomBot'
+INFO:__main__:Bot started, model=black-forest-labs/FLUX.1-Kontext-dev, providers=fal-ai → huggingface
+INFO:aiogram.dispatcher:Start polling
+INFO:aiogram.dispatcher:Run polling for bot @MakeaRoomBot id=8655990537 - 'MakeRoomBot'
+INFO:__main__:Bot started, provider=polza, model=black-forest-labs/flux.2-pro
+INFO:aiogram.dispatcher:Start polling
+INFO:aiogram.dispatcher:Run polling for bot @MakeaRoomBot id=8655990537 - 'MakeRoomBot'
+INFO:__main__:Bot started, provider=polza, model=black-forest-labs/flux.2-pro
+INFO:aiogram.dispatcher:Start polling
+INFO:aiogram.dispatcher:Run polling for bot @MakeaRoomBot id=8655990537 - 'MakeRoomBot'
+INFO:aiogram.event:Update id=797065936 is handled. Duration 846 ms by bot id=8655990537
+INFO:aiogram.event:Update id=797065937 is handled. Duration 119 ms by bot id=8655990537
+INFO:aiogram.event:Update id=797065938 is handled. Duration 191 ms by bot id=8655990537
+INFO:aiogram.event:Update id=797065939 is handled. Duration 443 ms by bot id=8655990537
+INFO:aiogram.event:Update id=797065940 is handled. Duration 471 ms by bot id=8655990537
+INFO:aiogram.event:Update id=797065941 is handled. Duration 235 ms by bot id=8655990537
+INFO:aiogram.event:Update id=797065942 is handled. Duration 1785 ms by bot id=8655990537
+INFO:aiogram.event:Update id=797065943 is handled. Duration 236 ms by bot id=8655990537
+INFO:__main__:Generated via polza, cost_rub=5
+INFO:aiogram.event:Update id=797065944 is handled. Duration 26682 ms by bot id=8655990537
+INFO:__main__:Bot started, provider=polza, model=black-forest-labs/flux.2-pro
+INFO:aiogram.dispatcher:Start polling
+INFO:aiogram.dispatcher:Run polling for bot @MakeaRoomBot id=8655990537 - 'MakeRoomBot'
