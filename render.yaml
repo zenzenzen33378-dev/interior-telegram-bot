@@ -3,6 +3,8 @@ services:
     name: interior-telegram-bot
     runtime: docker
     plan: free
+    repo: https://github.com/zenzenzen33378-dev/interior-telegram-bot
+    branch: main
     healthCheckPath: /health
     envVars:
       - key: TELEGRAM_BOT_TOKEN
