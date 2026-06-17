@@ -4,7 +4,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT"
-SERVICE_NAME="${RENDER_SERVICE_NAME:-interior-telegram-bot}"
+SERVICE_NAME="${RENDER_SERVICE_NAME:-interior-telegram-bot-luea}"
 HEALTH_URL="https://${SERVICE_NAME}.onrender.com/health"
 
 if [ -f .env ]; then
@@ -33,11 +33,22 @@ SERVICE_ID="$(echo "$SERVICES_JSON" | python3 -c "
 import json, sys
 name = sys.argv[1]
 data = json.load(sys.stdin)
+# Точное имя или префикс (Render добавляет суффикс: interior-telegram-bot-luea)
+candidates = []
 for item in data:
     s = item.get('service') or item
-    if s.get('name') == name:
-        print(s['id'])
+    n = s.get('name', '')
+    if n == name or n.startswith('interior-telegram-bot'):
+        candidates.append((n, s['id']))
+if not candidates:
+    sys.exit(0)
+# Предпочитаем точное совпадение
+for n, sid in candidates:
+    if n == name:
+        print(sid)
         break
+else:
+    print(candidates[0][1])
 " "$SERVICE_NAME" 2>/dev/null || true)"
 
 if [ -z "$SERVICE_ID" ]; then
