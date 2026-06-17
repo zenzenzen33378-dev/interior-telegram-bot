@@ -27,3 +27,5 @@ services:
         value: "20"
       - key: SUBSCRIPTION_ADMIN_USERNAMES
         value: leeooo19
+      - key: PAYMENT_SKIP_ENABLED
+        value: "true"

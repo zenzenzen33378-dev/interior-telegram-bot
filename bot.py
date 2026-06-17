@@ -12,6 +12,7 @@ import tempfile
 import time
 import urllib.error
 import urllib.request
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
 
@@ -60,6 +61,11 @@ SUBSCRIPTION_ADMIN_USERNAMES = {
     if part.strip()
 }
 SUBSCRIPTION_ENABLED = bool(YOOKASSA_SHOP_ID and YOOKASSA_SECRET_KEY)
+PAYMENT_SKIP_ENABLED = os.getenv("PAYMENT_SKIP_ENABLED", "true").lower() in (
+    "1",
+    "true",
+    "yes",
+)
 
 if not POLZA_API_KEY:
     raise RuntimeError("Укажите POLZA_API_KEY в .env")
@@ -678,13 +684,19 @@ def _subscribe_prompt(user_id: Optional[int] = None) -> str:
     )
 
 
+def _payment_skip_row() -> list[list[InlineKeyboardButton]]:
+    if not PAYMENT_SKIP_ENABLED:
+        return []
+    return [[InlineKeyboardButton(text="⏭ Пропустить оплату", callback_data="pay:skip")]]
+
+
 def _payment_kb(payment_url: str) -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [InlineKeyboardButton(text="💳 Оплатить", url=payment_url)],
-            [InlineKeyboardButton(text="🔄 Проверить оплату", callback_data="pay:check")],
-        ]
-    )
+    rows = [
+        [InlineKeyboardButton(text="💳 Оплатить", url=payment_url)],
+        [InlineKeyboardButton(text="🔄 Проверить оплату", callback_data="pay:check")],
+    ]
+    rows.extend(_payment_skip_row())
+    return InlineKeyboardMarkup(inline_keyboard=rows)
 
 
 async def _require_subscription(message: Message) -> bool:
@@ -696,12 +708,12 @@ async def _require_subscription(message: Message) -> bool:
 
 
 def _subscribe_inline_kb() -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [InlineKeyboardButton(text="💳 Оформить подписку", callback_data="pay:subscribe")],
-            [InlineKeyboardButton(text="🔄 Проверить оплату", callback_data="pay:check")],
-        ]
-    )
+    rows = [
+        [InlineKeyboardButton(text="💳 Оформить подписку", callback_data="pay:subscribe")],
+        [InlineKeyboardButton(text="🔄 Проверить оплату", callback_data="pay:check")],
+    ]
+    rows.extend(_payment_skip_row())
+    return InlineKeyboardMarkup(inline_keyboard=rows)
 
 
 async def _wrong_step_alert(callback: CallbackQuery, state: FSMContext) -> None:
@@ -780,6 +792,33 @@ async def cmd_status(message: Message):
 async def on_pay_subscribe(callback: CallbackQuery):
     await callback.answer()
     await cmd_subscribe(callback.message)
+
+
+@dp.callback_query(F.data == "pay:skip")
+async def on_pay_skip(callback: CallbackQuery):
+    if not SUBSCRIPTION_ENABLED:
+        await callback.answer("Оплата недоступна", show_alert=True)
+        return
+    if not PAYMENT_SKIP_ENABLED:
+        await callback.answer("Пропуск оплаты отключён", show_alert=True)
+        return
+
+    user_id = callback.from_user.id
+    user = sub_store.get_user(user_id)
+    paid_until = user.get("paid_until")
+    now = datetime.now(timezone.utc)
+    if paid_until and paid_until > now and user.get("generations_left", 0) > 0:
+        await callback.answer("Подписка уже активна", show_alert=True)
+        return
+
+    sub_store.grant_subscription_skip(
+        user_id, SUBSCRIPTION_DAYS, SUBSCRIPTION_GENERATIONS
+    )
+    await callback.answer("Подписка активирована")
+    await callback.message.answer(
+        "✅ Оплата пропущена (тестовый режим).\n\n"
+        + sub_store.status_text(user_id)
+    )
 
 
 @dp.callback_query(F.data == "pay:check")

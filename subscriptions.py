@@ -214,6 +214,12 @@ class SubscriptionStore:
             ).fetchone()
         return row["payment_id"] if row else None
 
+    def grant_subscription_skip(self, telegram_id: int, days: int, generations: int) -> None:
+        """Временная активация без оплаты (тестовый режим)."""
+        payment_id = f"skip-{telegram_id}-{uuid.uuid4()}"
+        self.activate_subscription(telegram_id, payment_id, days, generations)
+        logger.info("Skip-payment subscription user=%s payment=%s", telegram_id, payment_id)
+
 
 class YooKassaBilling:
     def __init__(
